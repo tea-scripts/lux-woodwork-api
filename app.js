@@ -6,12 +6,20 @@ const app = express();
 
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
+
 // DB Connection
 const connectDB = require('./db/connect');
 
 // Middleware
 const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
+
+const allowedOrigins = [
+  'https://adal-front.herokuapp.com',
+  'http://localhost:3000',
+  'https://adal-backend.herokuapp.com',
+];
 
 // Routes
 const authRouter = require('./routes/authRoutes');
@@ -20,6 +28,17 @@ const userRouter = require('./routes/userRoutes');
 app.use(morgan('tiny'));
 app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+  })
+);
 
 app.get('/', (req, res) => {
   res.send('Lux Woodwork API');
