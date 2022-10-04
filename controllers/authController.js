@@ -4,7 +4,7 @@ const CustomError = require('../errors');
 const {
   attachCookiesToResponse,
   createTokenUser,
-  sendEmail,
+  sendVerificationEmail,
 } = require('../utils');
 const crypto = require('crypto');
 
@@ -21,6 +21,8 @@ const register = async (req, res) => {
 
   const verificationToken = crypto.randomBytes(45).toString('hex');
 
+  const origin = 'http://localhost:3000';
+
   const user = await User.create({
     email,
     password,
@@ -29,7 +31,12 @@ const register = async (req, res) => {
     verificationToken,
   });
 
-  await sendEmail();
+  await sendVerificationEmail({
+    username: user.username,
+    email: user.email,
+    verificationToken: user.verificationToken,
+    origin: origin,
+  });
   // const tokenUser = createTokenUser(user);
   // attachCookiesToResponse({ res, user: tokenUser });
 
