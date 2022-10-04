@@ -73,6 +73,12 @@ const UserSchema = new Schema(
     verified: {
       type: Date,
     },
+    passwordToken: {
+      type: String,
+    },
+    passwordTokenExpirationDate: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );
