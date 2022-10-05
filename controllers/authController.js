@@ -90,20 +90,6 @@ const login = async (req, res) => {
   res.status(StatusCodes.OK).json({ user, token });
 };
 
-const logout = async (req, res) => {
-  res.cookie('accessToken', 'logout', {
-    httpOnly: true,
-    expires: new Date(Date.now()),
-  });
-
-  res.cookie('refreshToken', 'logout', {
-    httpOnly: true,
-    expires: new Date(Date.now()),
-  });
-
-  res.status(StatusCodes.OK).json({ msg: 'logged out' });
-};
-
 const forgotPassword = async (req, res) => {
   const { email } = req.body;
   if (!email) {
@@ -171,7 +157,6 @@ const resetPassword = async (req, res) => {
 module.exports = {
   register,
   login,
-  logout,
   verifyEmail,
   forgotPassword,
   resetPassword,
