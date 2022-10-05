@@ -19,6 +19,7 @@ const allowedOrigins = [
   'https://adal-front.herokuapp.com',
   'http://localhost:3000',
   'https://adal-backend.herokuapp.com',
+  'https://lux-woodwork-store.netlify.app'
 ];
 
 // Routes
