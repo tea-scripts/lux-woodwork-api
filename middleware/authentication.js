@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const authenticateUser = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer')) {
-    throw new CustomError.UnauthenticatedError('Authentication Invalid hads');
+    throw new CustomError.UnauthenticatedError('Authentication Invalid');
   }
 
   const token = authHeader.split(' ')[1];
@@ -17,11 +17,10 @@ const authenticateUser = async (req, res, next) => {
     };
     next();
   } catch (error) {
-    throw new CustomError.UnauthenticatedError('Authentication Invalid hehe');
+    throw new CustomError.UnauthenticatedError('Authentication Invalid');
   }
 };
 
-// Set Permissions
 const authorizePermissions = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {

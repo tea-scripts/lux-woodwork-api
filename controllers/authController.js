@@ -2,7 +2,6 @@ const User = require('../models/User');
 const { StatusCodes } = require('http-status-codes');
 const CustomError = require('../errors');
 const crypto = require('crypto');
-const Token = require('../models/Token');
 const {
   sendVerificationEmail,
   sendResetPasswordEmail,
@@ -92,8 +91,6 @@ const login = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  await Token.findOneAndDelete({ user: req.user.userId });
-
   res.cookie('accessToken', 'logout', {
     httpOnly: true,
     expires: new Date(Date.now()),
