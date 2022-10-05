@@ -27,26 +27,6 @@ const UserSchema = new Schema(
       minlength: [6, 'Minimum username length is 6 characters'],
       required: [true, 'Please provide a username'],
     },
-    address: [
-      {
-        street: {
-          type: String,
-          default: '',
-        },
-        city: {
-          type: String,
-          default: '',
-        },
-        state: {
-          type: String,
-          default: '',
-        },
-        zip: {
-          type: String,
-          default: '',
-        },
-      },
-    ],
     phone: {
       type: String,
     },

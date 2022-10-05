@@ -19,12 +19,13 @@ const allowedOrigins = [
   'https://adal-front.herokuapp.com',
   'http://localhost:3000',
   'https://adal-backend.herokuapp.com',
-  'https://lux-woodwork-store.netlify.app'
+  'https://lux-woodwork-store.netlify.app',
 ];
 
 // Routes
 const authRouter = require('./routes/authRoutes');
 const userRouter = require('./routes/userRoutes');
+const addressRouter = require('./routes/addressRoutes');
 
 app.use(morgan('tiny'));
 app.use(express.json());
@@ -45,8 +46,10 @@ app.get('/', (req, res) => {
   res.send('Lux Woodwork API');
 });
 
+// User Routes
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/address', addressRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
