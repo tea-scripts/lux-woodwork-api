@@ -26,6 +26,10 @@ const AddressSchema = new Schema(
     street: {
       type: String,
     },
+    defaultAddress: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
