@@ -25,6 +25,7 @@ const errorHandlerMiddleware = require('./middleware/error-handler');
 const allowedOrigins = [
   'https://adal-front.herokuapp.com',
   'http://localhost:3000',
+  'http://localhost:3001',
   'https://adal-backend.herokuapp.com',
   'https://lux-woodwork-store.netlify.app',
 ];
