@@ -56,6 +56,10 @@ const ProductSchema = new Schema(
       type: Number,
       default: 0,
     },
+    displayProduct: {
+      type: Boolean,
+      default: true,
+    },
     user: {
       type: mongoose.Types.ObjectId,
       ref: 'User',
