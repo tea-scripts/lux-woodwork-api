@@ -4,6 +4,7 @@ const { StatusCodes } = require('http-status-codes');
 const CustomError = require('../errors');
 const { checkPermissions } = require('../utils');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const User = require('../models/User');
 
 const createOrder = async (req, res) => {
   const { cartItems, tax, shippingFee } = req.body;
@@ -47,13 +48,20 @@ const createOrder = async (req, res) => {
    * Will Setup Payment Intent/Gateway Here
    */
 
+  const user = await User.findOne({ _id: req.user.userId });
+  if (!user) {
+    throw new CustomError.NotFoundError(`No user with id : ${req.user.userId}`);
+  }
+
+  const userEmail = user.email;
+
   const paymentIntent = await stripe.paymentIntents.create({
     amount: total,
     currency: 'php',
     description: 'Lux Woodwork Store',
-    // confirm: true,
     payment_method: 'pm_card_visa',
     payment_method_types: ['card'],
+    receipt_email: userEmail,
   });
 
   const order = await Order.create({
