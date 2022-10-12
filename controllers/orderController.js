@@ -27,7 +27,7 @@ const createOrder = async (req, res) => {
     }
     const { name, price, image, _id } = dbProduct;
     const singleOrderItem = {
-      quantity: item.quantity,
+      amount: item.quantity,
       name,
       price,
       image,
