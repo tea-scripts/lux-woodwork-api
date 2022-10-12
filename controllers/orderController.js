@@ -51,7 +51,7 @@ const createOrder = async (req, res) => {
     amount: total,
     currency: 'php',
     description: 'Lux Woodwork Store',
-    confirm: true,
+    // confirm: true,
     payment_method: 'pm_card_visa',
     payment_method_types: ['card'],
   });
