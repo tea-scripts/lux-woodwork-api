@@ -27,7 +27,7 @@ const createOrder = async (req, res) => {
     }
     const { name, price, image, _id } = dbProduct;
     const singleOrderItem = {
-      amount: item.quantity,
+      quantity: item.quantity,
       name,
       price,
       image,
@@ -48,7 +48,7 @@ const createOrder = async (req, res) => {
    */
 
   const paymentIntent = await stripe.paymentIntents.create({
-    quantity: total,
+    amount: total,
     currency: 'php',
     description: 'Lux Woodwork Store',
     confirm: true,
