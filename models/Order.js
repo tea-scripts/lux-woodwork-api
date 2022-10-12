@@ -14,7 +14,7 @@ const SingleOrderItemSchema = new Schema({
     type: Number,
     required: true,
   },
-  amount: {
+  quantity: {
     type: Number,
     required: true,
   },

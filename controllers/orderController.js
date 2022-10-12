@@ -3,9 +3,7 @@ const Product = require('../models/Product');
 const { StatusCodes } = require('http-status-codes');
 const CustomError = require('../errors');
 const { checkPermissions } = require('../utils');
-const stripe = require('stripe')(
-  'sk_test_51LRc6LBAIWKWcynMUdBp4qUpCx1sTqdFmWqS717kOJFeCkomm7RV4EZEdBGnG650hA1ts9aCjQv8vYNDijmrtttG00hgHNBH3M'
-);
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const createOrder = async (req, res) => {
   const { cartItems, tax, shippingFee } = req.body;
@@ -29,7 +27,7 @@ const createOrder = async (req, res) => {
     }
     const { name, price, image, _id } = dbProduct;
     const singleOrderItem = {
-      amount: item.amount,
+      quantity: item.quantity,
       name,
       price,
       image,
@@ -40,7 +38,7 @@ const createOrder = async (req, res) => {
     orderItems = [...orderItems, singleOrderItem];
 
     // calculate subtotal
-    subtotal += item.amount * price;
+    subtotal += item.quantity * price;
   }
   // calculate total
   const total = tax + shippingFee + subtotal;
@@ -50,7 +48,7 @@ const createOrder = async (req, res) => {
    */
 
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: total,
+    quantity: total,
     currency: 'php',
     description: 'Lux Woodwork Store',
     confirm: true,
