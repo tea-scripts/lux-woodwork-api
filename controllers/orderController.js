@@ -52,9 +52,7 @@ const createOrder = async (req, res) => {
     currency: 'php',
     description: 'Lux Woodwork Store',
     confirm: true,
-    automatic_payment_methods: {
-      enabled: true,
-    },
+    payment_method: 'pm_card_visa',
   });
 
   const order = await Order.create({
