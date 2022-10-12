@@ -6,7 +6,7 @@ const { checkPermissions } = require('../utils');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const createOrder = async (req, res) => {
-  const { items: cartItems, tax, shippingFee } = req.body;
+  const { cartItems, tax, shippingFee } = req.body;
 
   if (!cartItems || cartItems.length < 1) {
     throw new CustomError.BadRequestError('No cart items provided');
