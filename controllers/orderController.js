@@ -3,7 +3,9 @@ const Product = require('../models/Product');
 const { StatusCodes } = require('http-status-codes');
 const CustomError = require('../errors');
 const { checkPermissions } = require('../utils');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const stripe = require('stripe')(
+  'sk_test_51LRc6LBAIWKWcynMUdBp4qUpCx1sTqdFmWqS717kOJFeCkomm7RV4EZEdBGnG650hA1ts9aCjQv8vYNDijmrtttG00hgHNBH3M'
+);
 
 const createOrder = async (req, res) => {
   const { cartItems, tax, shippingFee } = req.body;
@@ -53,6 +55,7 @@ const createOrder = async (req, res) => {
     description: 'Lux Woodwork Store',
     confirm: true,
     payment_method: 'pm_card_visa',
+    payment_method_types: ['card'],
   });
 
   const order = await Order.create({
