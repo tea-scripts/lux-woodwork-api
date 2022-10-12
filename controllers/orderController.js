@@ -3,6 +3,7 @@ const Product = require('../models/Product');
 const { StatusCodes } = require('http-status-codes');
 const CustomError = require('../errors');
 const { checkPermissions } = require('../utils');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const createOrder = async (req, res) => {
   const { items: cartItems, tax, shippingFee } = req.body;
@@ -48,16 +49,29 @@ const createOrder = async (req, res) => {
    * Will Setup Payment Intent/Gateway Here
    */
 
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: total,
+    currency: 'php',
+    description: 'Lux Woodwork Store',
+    confirm: true,
+    automatic_payment_methods: {
+      enabled: true,
+    },
+  });
+
   const order = await Order.create({
     orderItems,
     total,
     subtotal,
     tax,
     shippingFee,
+    clientSecret: paymentIntent.client_secret,
     user: req.user.userId,
   });
 
-  res.status(StatusCodes.CREATED).json({ order });
+  res
+    .status(StatusCodes.CREATED)
+    .json({ order, clientSecret: paymentIntent.clientSecret });
 };
 
 const getUserOrders = async (req, res) => {
