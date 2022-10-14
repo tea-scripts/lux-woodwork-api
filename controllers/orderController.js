@@ -5,6 +5,7 @@ const CustomError = require('../errors');
 const { checkPermissions } = require('../utils');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const User = require('../models/User');
+const sendOrderConfirmationEmail = require('../utils/sendOrderConfirmationEmail');
 
 const createOrder = async (req, res) => {
   const { cartItems, tax, shippingFee } = req.body;
@@ -74,6 +75,13 @@ const createOrder = async (req, res) => {
     user: req.user.userId,
   });
 
+  await sendOrderConfirmationEmail({
+    username: user.username,
+    email: userEmail,
+    order,
+    origin: 'http://localhost:3000',
+  });
+
   res
     .status(StatusCodes.CREATED)
     .json({ order, clientSecret: paymentIntent.clientSecret });
@@ -81,7 +89,7 @@ const createOrder = async (req, res) => {
 
 const getUserOrders = async (req, res) => {
   const orders = await Order.find({ user: req.user.userId });
-  res.status(StatusCodes.OK).json({ orders });
+  res.status(StatusCodes.OK).json({ orders, count: orders.length });
 };
 
 const getSingleOrder = async (req, res) => {
@@ -89,6 +97,8 @@ const getSingleOrder = async (req, res) => {
   if (!order) {
     throw new CustomError.NotFoundError(`No order with id : ${req.params.id}`);
   }
+
+  checkPermissions(req.user, order.user);
   res.status(StatusCodes.OK).json({ order });
 };
 
@@ -98,7 +108,7 @@ const getAllOrders = async (req, res) => {
 };
 
 const updateOrder = async (req, res) => {
-  const { status } = req.body;
+  const { paymentIntentId } = req.body;
   const order = await Order.findOne({ _id: req.params.id });
   if (!order) {
     throw new CustomError.NotFoundError(`No order with id : ${req.params.id}`);
@@ -106,8 +116,10 @@ const updateOrder = async (req, res) => {
 
   checkPermissions(req.user, order.user);
 
-  order.status = status;
+  order.paymentIntentId = paymentIntentId;
+  order.status = 'paid';
   await order.save();
+
   res.status(StatusCodes.OK).json({ order });
 };
 
