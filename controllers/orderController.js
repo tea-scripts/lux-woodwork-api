@@ -75,13 +75,6 @@ const createOrder = async (req, res) => {
     user: req.user.userId,
   });
 
-  await sendOrderConfirmationEmail({
-    username: user.username,
-    email: userEmail,
-    order,
-    origin: 'http://localhost:3000',
-  });
-
   res
     .status(StatusCodes.CREATED)
     .json({ order, clientSecret: paymentIntent.clientSecret });
@@ -110,6 +103,12 @@ const getAllOrders = async (req, res) => {
 const updateOrder = async (req, res) => {
   const { paymentIntentId } = req.body;
   const order = await Order.findOne({ _id: req.params.id });
+
+  const user = await User.findOne({ _id: req.user.userId });
+  if (!user) {
+    throw new CustomError.NotFoundError(`No user with id : ${req.user.userId}`);
+  }
+
   if (!order) {
     throw new CustomError.NotFoundError(`No order with id : ${req.params.id}`);
   }
@@ -118,7 +117,15 @@ const updateOrder = async (req, res) => {
 
   order.paymentIntentId = paymentIntentId;
   order.status = 'paid';
+
   await order.save();
+
+  await sendOrderConfirmationEmail({
+    username: user.username,
+    email: user.email,
+    order,
+    origin: 'http://localhost:3000',
+  });
 
   res.status(StatusCodes.OK).json({ order });
 };
