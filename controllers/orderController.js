@@ -96,7 +96,10 @@ const getSingleOrder = async (req, res) => {
 };
 
 const getAllOrders = async (req, res) => {
-  const orders = await Order.find({});
+  const orders = await Order.find({}).populate(
+    'user',
+    'username email first_name last_name'
+  );
   res.status(StatusCodes.OK).json({ orders });
 };
 
