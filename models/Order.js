@@ -56,7 +56,6 @@ const OrderSchema = new Schema(
     },
     expiryDate: {
       type: Date,
-      required: true,
     },
     clientSecret: {
       type: String,
