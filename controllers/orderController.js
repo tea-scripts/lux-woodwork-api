@@ -82,7 +82,7 @@ const createOrder = async (req, res) => {
   setTimeout(async () => {
     await Order.findOneAndUpdate(
       { _id: order._id },
-      { status: 'cancelled' },
+      { status: 'cancelled', expiryDate: null },
       { new: true }
     );
   }, 1000 * 60 * 60 * 24 * 5);
