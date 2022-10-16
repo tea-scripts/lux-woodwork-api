@@ -61,6 +61,10 @@ const OrderSchema = new Schema(
     paymentIntentId: {
       type: String,
     },
+    address: {
+      type: Map,
+      of: String,
+    },
   },
   { timestamps: true }
 );

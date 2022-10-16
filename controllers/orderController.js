@@ -8,7 +8,7 @@ const User = require('../models/User');
 const sendOrderConfirmationEmail = require('../utils/sendOrderConfirmationEmail');
 
 const createOrder = async (req, res) => {
-  const { cartItems, tax, shippingFee } = req.body;
+  const { cartItems, tax, shippingFee, defaultAddress } = req.body;
 
   if (!cartItems || cartItems.length < 1) {
     throw new CustomError.BadRequestError('No cart items provided');
@@ -73,7 +73,16 @@ const createOrder = async (req, res) => {
     shippingFee,
     clientSecret: paymentIntent.client_secret,
     user: req.user.userId,
+    shippingAddress: defaultAddress,
   });
+
+  setTimeout(async () => {
+    await Order.findOneAndUpdate(
+      { _id: order._id },
+      { status: 'cancelled' },
+      { new: true }
+    );
+  }, 10000);
 
   res
     .status(StatusCodes.CREATED)

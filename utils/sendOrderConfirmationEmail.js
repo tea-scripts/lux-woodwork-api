@@ -19,6 +19,12 @@ const sendOrderConfirmationEmail = async ({
   <p>Your order has been confirmed.</p>
   <p>Order ID: ${order._id}</p>
   <p>Order Status: ${order.status}</p>
+  <p>Shipping : </p>
+  <p style='max-width: 30rem'> ${order.shippingAddress.street}, ${
+    order.shippingAddress.barangay
+  } ${order.shippingAddress.city} ${order.shippingAddress.province}, ${
+    order.shippingAddress.postalCode
+  }, ${order.shippingAddress.region} PH.</p>
   <p>Order Items:</p>
   <ul>
   ${order.orderItems
