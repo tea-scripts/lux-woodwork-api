@@ -54,6 +54,10 @@ const OrderSchema = new Schema(
       ref: 'User',
       required: true,
     },
+    expiryDate: {
+      type: Date,
+      required: true,
+    },
     clientSecret: {
       type: String,
       required: true,

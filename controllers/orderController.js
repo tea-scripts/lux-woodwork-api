@@ -65,6 +65,8 @@ const createOrder = async (req, res) => {
     receipt_email: userEmail,
   });
 
+  const expiryDate = new Date();
+
   const order = await Order.create({
     orderItems,
     total,
@@ -74,6 +76,7 @@ const createOrder = async (req, res) => {
     clientSecret: paymentIntent.client_secret,
     user: req.user.userId,
     shippingAddress: defaultAddress,
+    expiryDate: expiryDate.setDate(expiryDate.getDate() + 5),
   });
 
   setTimeout(async () => {
@@ -82,7 +85,7 @@ const createOrder = async (req, res) => {
       { status: 'cancelled' },
       { new: true }
     );
-  }, 10000);
+  }, 1000 * 60 * 60 * 24 * 5);
 
   res
     .status(StatusCodes.CREATED)
@@ -129,6 +132,7 @@ const updateOrder = async (req, res) => {
 
   order.paymentIntentId = paymentIntentId;
   order.status = 'paid';
+  order.expiryDate = null;
 
   await order.save();
 
