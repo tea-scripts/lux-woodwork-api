@@ -7,6 +7,7 @@ const {
   getAllOrders,
   updateOrder,
   deleteOrder,
+  cancelOrder,
 } = require('../controllers/orderController');
 const {
   authenticateUser,
@@ -24,6 +25,7 @@ router
   .route('/:id')
   .get(authenticateUser, getSingleOrder)
   .patch(authenticateUser, updateOrder)
+  .patch(authenticateUser, cancelOrder)
   .delete(authenticateUser, deleteOrder);
 
 module.exports = router;

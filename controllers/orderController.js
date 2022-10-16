@@ -158,6 +158,22 @@ const deleteOrder = async (req, res) => {
   res.status(StatusCodes.OK).json({ order });
 };
 
+const cancelOrder = async (req, res) => {
+  const order = await Order.findOne({ _id: req.params.id });
+  if (!order) {
+    throw new CustomError.NotFoundError(`No order with id : ${req.params.id}`);
+  }
+
+  checkPermissions(req.user, order.user);
+
+  order.status = 'cancelled';
+  order.expiryDate = null;
+
+  await order.save();
+
+  res.status(StatusCodes.OK).json({ msg: 'Order cancelled' });
+};
+
 module.exports = {
   createOrder,
   getUserOrders,
@@ -165,4 +181,5 @@ module.exports = {
   getAllOrders,
   updateOrder,
   deleteOrder,
+  cancelOrder,
 };
