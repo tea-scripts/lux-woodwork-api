@@ -89,8 +89,12 @@ const createOrder = async (req, res) => {
 };
 
 const getUserOrders = async (req, res) => {
-  const orders = await Order.find({ user: req.user.userId });
-  res.status(StatusCodes.OK).json({ orders, count: orders.length });
+  const limit = 5;
+  const page = Number(req.query.page) || 1;
+
+  const count = await Order.countDocuments({ user: req.user.userId })
+  const orders = await Order.find({ user: req.user.userId }).sort({createdAt: -1}).limit(limit).skip(limit * (page - 1));
+  res.status(StatusCodes.OK).json({ orders, count: orders.length, pages: Math.ceil(count / limit) });
 };
 
 const getSingleOrder = async (req, res) => {
