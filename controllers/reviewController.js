@@ -61,7 +61,7 @@ const getSingleReview = async (req, res) => {
 
 const updateReview = async (req, res) => {
   const { id: reviewId } = req.params;
-  const { rating, title, comment } = req.body;
+  const { rating, comment } = req.body;
 
   const review = await Review.findOne({ _id: reviewId });
 
@@ -72,7 +72,6 @@ const updateReview = async (req, res) => {
   checkPermissions(req.user, review.user);
 
   review.rating = rating;
-  review.title = title;
   review.comment = comment;
 
   await review.save();
