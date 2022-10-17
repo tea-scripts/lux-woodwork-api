@@ -25,7 +25,8 @@ router
   .route('/:id')
   .get(authenticateUser, getSingleOrder)
   .patch(authenticateUser, updateOrder)
-  .patch(authenticateUser, cancelOrder)
   .delete(authenticateUser, deleteOrder);
+
+router.route('/cancel/:id').patch(authenticateUser, cancelOrder);
 
 module.exports = router;
