@@ -93,9 +93,21 @@ const deleteReview = async (req, res) => {
 };
 
 const getSingleProductReviews = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+
   const { id: productId } = req.params;
-  const reviews = await Review.find({ product: productId });
-  res.status(StatusCodes.OK).json({ reviews, count: reviews.length });
+  const reviews = await Review.find({ product: productId })
+    .skip(skip)
+    .limit(limit);
+
+  const totalReviews = await Review.countDocuments({ product: productId });
+  const totalPages = Math.ceil(totalReviews / limit);
+
+  res
+    .status(StatusCodes.OK)
+    .json({ reviews, totalPages, totalReviews, count: reviews.length });
 };
 
 module.exports = {
