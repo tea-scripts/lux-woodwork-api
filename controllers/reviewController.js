@@ -99,6 +99,10 @@ const getSingleProductReviews = async (req, res) => {
 
   const { id: productId } = req.params;
   const reviews = await Review.find({ product: productId })
+    .populate({
+      path: 'user',
+      select: 'username first_name last_name',
+    })
     .skip(skip)
     .limit(limit);
 
