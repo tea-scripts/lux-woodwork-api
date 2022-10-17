@@ -104,11 +104,22 @@ const getSingleOrder = async (req, res) => {
 };
 
 const getAllOrders = async (req, res) => {
-  const orders = await Order.find({}).populate(
-    'user',
-    'phone  email first_name last_name'
-  );
-  res.status(StatusCodes.OK).json({ orders });
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 3;
+  const skip = (page - 1) * limit;
+
+  const totalOrders = await Order.countDocuments();
+  const totalPages = Math.ceil(totalOrders / limit);
+
+  const orders = await Order.find({})
+    .populate('user', 'phone  email first_name last_name')
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+
+  res
+    .status(StatusCodes.OK)
+    .json({ orders, totalPages, totalOrders, count: orders.length });
 };
 
 const updateOrder = async (req, res) => {

@@ -4,9 +4,20 @@ const CustomError = require('../errors');
 const { checkPermissions } = require('../utils');
 
 const getAllUsers = async (req, res) => {
-  console.log(req.user);
-  const users = await User.find({ role: 'user' }).select('-password');
-  res.status(StatusCodes.OK).json({ users, count: users.length });
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  const users = await User.find({ role: 'user' })
+    .select('-password')
+    .skip(skip)
+    .limit(limit);
+  const totalUsers = await User.countDocuments({ role: 'user' });
+  const totalPages = Math.ceil(totalUsers / limit);
+
+  res
+    .status(StatusCodes.OK)
+    .json({ users, totalPages, totalUsers, count: users.length });
 };
 
 const getSingleUser = async (req, res) => {

@@ -30,12 +30,21 @@ const createReview = async (req, res) => {
 };
 
 const getAllReviews = async (req, res) => {
-  const reviews = await Review.find({}).populate({
-    path: 'product',
-    select: 'name category price',
-  });
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
 
-  res.status(StatusCodes.OK).json({ reviews, count: reviews.length });
+  const reviews = await Review.find()
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+
+  const totalReviews = await Review.countDocuments();
+  const totalPages = Math.ceil(totalReviews / limit);
+
+  res
+    .status(StatusCodes.OK)
+    .json({ reviews, totalPages, totalReviews, count: reviews.length });
 };
 
 const getSingleReview = async (req, res) => {

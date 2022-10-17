@@ -9,8 +9,21 @@ const createProduct = async (req, res) => {
 };
 
 const getAllProducts = async (req, res) => {
-  const products = await Product.find({});
-  res.status(StatusCodes.OK).json({ products, count: products.length });
+  const page = parseInt(req.query.pages) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (pages - 1) * limit;
+
+  const products = await Product.find({})
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+
+  const totalProducts = await Product.countDocuments();
+  const totalPages = Math.ceil(totalProducts / limit);
+
+  res
+    .status(StatusCodes.OK)
+    .json({ products, totalPages, totalProducts, count: products.length });
 };
 
 const getSingleProduct = async (req, res) => {
