@@ -64,9 +64,8 @@ const OrderSchema = new Schema(
     paymentIntentId: {
       type: String,
     },
-    address: {
-      type: Map,
-      of: String,
+    shippingAddress: {
+      type: Schema.Types.Mixed,
     },
   },
   { timestamps: true }

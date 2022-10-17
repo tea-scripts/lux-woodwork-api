@@ -45,10 +45,6 @@ const createOrder = async (req, res) => {
   // calculate total
   const total = tax + shippingFee + subtotal;
 
-  /*
-   * Will Setup Payment Intent/Gateway Here
-   */
-
   const user = await User.findOne({ _id: req.user.userId });
   if (!user) {
     throw new CustomError.NotFoundError(`No user with id : ${req.user.userId}`);
