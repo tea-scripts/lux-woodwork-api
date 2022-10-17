@@ -69,6 +69,36 @@ const deleteAddress = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: 'Address Deleted' });
 };
 
+const selectDefaultAddress = async (req, res) => { 
+  const { id } = req.params;
+  const address = await Address.findOne({ _id: id });
+
+  if (!address) {
+    throw new CustomError.NotFoundError(`No address with id: ${id}`);
+  }
+
+  checkPermissions(req.user, address.userId);
+
+  console.log(address);
+
+  const updatedAddress = await Address.bulkWrite([
+      {
+          updateMany: {
+            filter: { userId: address.userId, defaultAddress: true },
+            update: { defaultAddress: false },
+      },
+      },
+      {
+          updateOne: {
+              filter: { _id: id },
+              update: { defaultAddress: true },
+          },
+      },
+  ])
+
+  res.status(StatusCodes.OK).json({ msg: 'Default Address Updated', updatedAddress });
+}
+
 module.exports = {
   getAllAddresses,
   getAllUserAddresses,
@@ -76,4 +106,5 @@ module.exports = {
   createAddress,
   updateAddress,
   deleteAddress,
+  selectDefaultAddress
 };
