@@ -11,6 +11,7 @@ const {
   createAddress,
   updateAddress,
   deleteAddress,
+  selectDefaultAddress,
 } = require('../controllers/addressController');
 
 router
@@ -23,6 +24,8 @@ router
   .get(authenticateUser, getSingleAddress)
   .patch(authenticateUser, updateAddress)
   .delete(authenticateUser, deleteAddress);
+
+router.route('/default/:id').patch(authenticateUser, selectDefaultAddress);
 
 router.route('/user/:id').get(authenticateUser, getAllUserAddresses);
 
