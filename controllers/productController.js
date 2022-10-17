@@ -9,9 +9,9 @@ const createProduct = async (req, res) => {
 };
 
 const getAllProducts = async (req, res) => {
-  const page = parseInt(req.query.pages) || 1;
+  const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
-  const skip = (pages - 1) * limit;
+  const skip = (page - 1) * limit;
 
   const products = await Product.find({})
     .sort({ createdAt: -1 })
