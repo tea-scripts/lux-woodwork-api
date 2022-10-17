@@ -47,6 +47,20 @@ const getAllReviews = async (req, res) => {
     .json({ reviews, totalPages, totalReviews, count: reviews.length });
 };
 
+const getUserReviews = async (req, res) => {
+  const limit = 5;
+  const page = Number(req.query.page) || 1;
+  const { id } = req.params;
+
+  checkPermissions(req.user, id);
+
+  const count = await Review.countDocuments({ user: id })
+
+  const userReviews = await Review.find({  user: req.user.userId }).populate('product', 'image').sort({createdAt: -1}).limit(limit).skip(limit * (page - 1)); 
+
+  res.status(StatusCodes.OK).json({ userReviews, count: userReviews.length, pages: Math.ceil(count / limit) });
+}
+
 const getSingleReview = async (req, res) => {
   const { id: reviewId } = req.params;
 
@@ -117,4 +131,5 @@ module.exports = {
   updateReview,
   deleteReview,
   getSingleProductReviews,
+  getUserReviews
 };
