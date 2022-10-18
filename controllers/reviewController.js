@@ -39,6 +39,10 @@ const getAllReviews = async (req, res) => {
       path: 'user',
       select: 'username first_name last_name',
     })
+    .populate({
+      path: 'product',
+      select: 'name',
+    })
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit);
@@ -66,13 +70,11 @@ const getUserReviews = async (req, res) => {
     .limit(limit)
     .skip(limit * (page - 1));
 
-  res
-    .status(StatusCodes.OK)
-    .json({
-      userReviews,
-      count: userReviews.length,
-      pages: Math.ceil(count / limit),
-    });
+  res.status(StatusCodes.OK).json({
+    userReviews,
+    count: userReviews.length,
+    pages: Math.ceil(count / limit),
+  });
 };
 
 const getSingleReview = async (req, res) => {
