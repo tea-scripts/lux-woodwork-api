@@ -35,6 +35,10 @@ const getAllReviews = async (req, res) => {
   const skip = (page - 1) * limit;
 
   const reviews = await Review.find()
+    .populate({
+      path: 'user',
+      select: 'username first_name last_name',
+    })
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit);
@@ -54,12 +58,22 @@ const getUserReviews = async (req, res) => {
 
   checkPermissions(req.user, id);
 
-  const count = await Review.countDocuments({ user: id })
+  const count = await Review.countDocuments({ user: id });
 
-  const userReviews = await Review.find({  user: req.user.userId }).populate('product', 'name image').sort({createdAt: -1}).limit(limit).skip(limit * (page - 1)); 
+  const userReviews = await Review.find({ user: req.user.userId })
+    .populate('product', 'name image')
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .skip(limit * (page - 1));
 
-  res.status(StatusCodes.OK).json({ userReviews, count: userReviews.length, pages: Math.ceil(count / limit) });
-}
+  res
+    .status(StatusCodes.OK)
+    .json({
+      userReviews,
+      count: userReviews.length,
+      pages: Math.ceil(count / limit),
+    });
+};
 
 const getSingleReview = async (req, res) => {
   const { id: reviewId } = req.params;
@@ -135,5 +149,5 @@ module.exports = {
   updateReview,
   deleteReview,
   getSingleProductReviews,
-  getUserReviews
+  getUserReviews,
 };
