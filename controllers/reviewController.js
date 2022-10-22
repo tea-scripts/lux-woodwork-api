@@ -3,6 +3,7 @@ const Product = require('../models/Product');
 const { StatusCodes } = require('http-status-codes');
 const CustomError = require('../errors');
 const { checkPermissions } = require('../utils');
+const Order = require('../models/Order');
 
 const createReview = async (req, res) => {
   const { product: productId } = req.body;
@@ -21,6 +22,18 @@ const createReview = async (req, res) => {
   if (alreadySubmitted) {
     throw new CustomError.BadRequestError(
       'Already submitted review for this product'
+    );
+  }
+
+  // find productId in the orderItems
+  const alreadyBought = await Order.findOne({
+    user: req.user.userId,
+    orderItems: { $elemMatch: { product: productId } },
+  });
+
+  if (!alreadyBought) {
+    throw new CustomError.BadRequestError(
+      'You have not bought this product yet'
     );
   }
 
