@@ -11,15 +11,13 @@ const {
   updateProduct,
   deleteProduct,
 } = require('../controllers/productController');
-const { uploadImage } = require('../controllers/uploadImageController');
+const { uploadImage } = require('../cloudinary');
 const { getSingleProductReviews } = require('../controllers/reviewController');
 
 router
   .route('/')
   .post(authenticateUser, authorizePermissions('admin'), createProduct)
   .get(getAllProducts);
-
-router.post('/uploadImage', authenticateUser, uploadImage);
 
 router
   .route('/:id')

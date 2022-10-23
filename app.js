@@ -7,13 +7,10 @@ const app = express();
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-const fileUpload = require('express-fileupload');
 const cloudinary = require('cloudinary').v2;
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.CLOUD_API_KEY,
-  api_secret: process.env.CLOUD_API_SECRET,
-});
+const multer = require('multer');
+const bodyParser = require('body-parser');
+const fs = require('fs');
 
 // DB Connection
 const connectDB = require('./db/connect');
@@ -30,6 +27,33 @@ const allowedOrigins = [
   'https://lux-woodwork-store.netlify.app',
 ];
 
+if (!fs.existsSync('./uploads')) {
+  fs.mkdirSync('./uploads');
+}
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './uploads');
+  },
+
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    cb(null, true);
+  } else {
+    cb({ message: 'Unsupported file format' }, false);
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  faceFilter: fileFilter,
+});
+
 // Routes
 const authRouter = require('./routes/authRoutes');
 const userRouter = require('./routes/userRoutes');
@@ -41,7 +65,6 @@ const reviewRouter = require('./routes/reviewRoutes');
 app.use(morgan('tiny'));
 app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));
-app.use(fileUpload({ useTempFiles: true }));
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -53,6 +76,19 @@ app.use(
     },
   })
 );
+app.use(
+  bodyParser.urlencoded({
+    extended: false,
+  })
+);
+app.use(bodyParser.json());
+app.use('/uploads', express.static('uploads'));
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
+});
 
 app.get('/', (req, res) => {
   res.send('Lux Woodwork API');
@@ -67,6 +103,39 @@ app.use('/api/v1/address', addressRouter);
 app.use('/api/v1/products', productRouter);
 app.use('/api/v1/orders', orderRouter);
 app.use('/api/v1/reviews', reviewRouter);
+
+const uploadToCloudinary = async (localPath) => {
+  const mainFolderName = 'lux-woodwork-product-images';
+  return cloudinary.uploader
+    .upload(localPath, { folder: mainFolderName })
+    .then((result) => {
+      fs.unlinkSync(localPath);
+      return {
+        url: result.url,
+      };
+    })
+    .catch((err) => {
+      fs.unlinkSync(localPath);
+      return {
+        error: err,
+      };
+    });
+};
+
+app.post('/api/v1/uploadImage', upload.array('image'), async (req, res) => {
+  let urls = [];
+
+  for (const file of req.files) {
+    const { path } = file;
+    const newPath = await uploadToCloudinary(path);
+    urls.push(newPath);
+  }
+
+  res.status(200).json({
+    msg: 'images uploaded successfully',
+    images: urls,
+  });
+});
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
