@@ -11,7 +11,6 @@ const {
   updateProduct,
   deleteProduct,
 } = require('../controllers/productController');
-const { uploadImage } = require('../cloudinary');
 const { getSingleProductReviews } = require('../controllers/reviewController');
 
 router
