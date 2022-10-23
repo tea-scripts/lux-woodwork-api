@@ -37,6 +37,7 @@ const addressRouter = require('./routes/addressRoutes');
 const productRouter = require('./routes/productRoutes');
 const orderRouter = require('./routes/orderRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
+const wishlistRouter = require('./routes/wishlistRoutes');
 
 app.use(morgan('tiny'));
 app.use(express.json());
@@ -62,6 +63,7 @@ app.get('/', (req, res) => {
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/address', addressRouter);
+app.use('/api/v1/wishlist', wishlistRouter);  
 
 // Product Routes
 app.use('/api/v1/products', productRouter);
