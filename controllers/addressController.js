@@ -9,14 +9,19 @@ const getAllAddresses = async (req, res) => {
 };
 
 const getAllUserAddresses = async (req, res) => {
+  const limit = 10;
+  const page  = Number(req.query.page) || 1;
   const { id } = req.params;
 
   checkPermissions(req.user, id);
 
-  const userAddresses = await Address.find({ userId: id });
+  const count = await Address.countDocuments({ userId: id });
+
+  const userAddresses = await Address.find({ userId: id }).limit(limit).skip((page - 1) * limit);
+
   res
     .status(StatusCodes.OK)
-    .json({ userAddresses, count: userAddresses.length });
+    .json({ userAddresses, count: userAddresses.length, pages: Math.ceil(count / limit) });
 };
 
 const getSingleAddress = async (req, res) => {

@@ -19,7 +19,7 @@ router
   .post(authenticateUser, createOrder)
   .get(authenticateUser, authorizePermissions('admin'), getAllOrders);
 
-router.route('/show-my-orders').get(authenticateUser, getUserOrders);
+router.route('/show-my-orders/:id').get(authenticateUser, getUserOrders);
 
 router
   .route('/:id')
