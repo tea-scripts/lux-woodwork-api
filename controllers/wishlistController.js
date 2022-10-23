@@ -24,16 +24,20 @@ const addWishlistItem = async (req, res) => {
 }
 
 const getUserWishlist = async (req, res) => {
+    const limit = 9;
+    const page = Number(req.query.page) || 1;
     const {id} = req.params;
 
     checkPermissions(req.user, id);
 
+    const count = await Wishlist.countDocuments({userId: id});
+
     const userWishlist = await Wishlist.find({userId: id}).populate({
         path: 'product',
         select: 'name image price featured description',    
-    });
+    }).sort({createdAt: -1}).limit(limit).skip((page - 1) * limit);
 
-    res.status(StatusCodes.OK).json({userWishlist, count: userWishlist.length});
+    res.status(StatusCodes.OK).json({userWishlist, count: userWishlist.length, pages: Math.ceil(count / limit)});
 }
 
 const deleteWishliistItem = async (req, res) => {
