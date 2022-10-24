@@ -24,9 +24,15 @@ router
   .route('/:id')
   .get(getSingleProduct)
   .patch(authenticateUser, authorizePermissions('admin'), updateProduct)
-  .patch(authenticateUser, authorizePermissions('admin'), archiveProduct)
-  .patch(authenticateUser, authorizePermissions('admin'), unarchiveProduct)
   .delete(authenticateUser, authorizePermissions('admin'), deleteProduct);
+
+router
+  .route('/archive/:id')
+  .patch(authenticateUser, authorizePermissions('admin'), archiveProduct);
+
+router
+  .route('/unarchive/:id')
+  .patch(authenticateUser, authorizePermissions('admin'), unarchiveProduct);
 
 router.route('/:id/reviews').get(getSingleProductReviews);
 

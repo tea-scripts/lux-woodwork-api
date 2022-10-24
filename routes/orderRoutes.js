@@ -27,9 +27,15 @@ router
   .route('/:id')
   .get(authenticateUser, getSingleOrder)
   .patch(authenticateUser, updateOrder)
-  .patch(authenticateUser, authorizePermissions('admin'), archiveOrder)
-  .patch(authenticateUser, authorizePermissions('admin'), unarchiveOrder)
-  .patch(authenticateUser, authorizePermissions('admin'), deleteOrder);
+  .delete(authenticateUser, authorizePermissions('admin'), deleteOrder);
+
+router
+  .route('archive/:id')
+  .patch(authenticateUser, authorizePermissions('admin'), archiveOrder);
+
+router
+  .route('unarchive/:id')
+  .patch(authenticateUser, authorizePermissions('admin'), unarchiveOrder);
 
 router.route('/cancel/:id').patch(authenticateUser, cancelOrder);
 

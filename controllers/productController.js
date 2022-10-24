@@ -38,7 +38,7 @@ const getSingleProduct = async (req, res) => {
 
 const archiveProduct = async (req, res) => {
   const { id } = req.params;
-  const product = await Product.findOneById({ _id: id });
+  const product = await Product.findOne({ _id: id });
 
   if (!product) {
     throw new CustomError.NotFoundError(`No product with id: ${id}`);
@@ -52,7 +52,7 @@ const archiveProduct = async (req, res) => {
 
 const unarchiveProduct = async (req, res) => {
   const { id } = req.params;
-  const product = await Product.findOneById({ _id: id });
+  const product = await Product.findOne({ _id: id });
 
   if (!product) {
     throw new CustomError.NotFoundError(`No product with id: ${id}`);

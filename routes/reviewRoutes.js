@@ -22,9 +22,15 @@ router
   .route('/:id')
   .get(getSingleReview)
   .patch(authenticateUser, updateReview)
-  .patch(authenticateUser, authorizePermissions('admin'), archiveReview)
-  .patch(authenticateUser, authorizePermissions('admin'), unarchiveReview)
-  .patch(authenticateUser, deleteReview);
+  .delete(authenticateUser, deleteReview);
+
+router
+  .route('/archive/:id')
+  .patch(authenticateUser, authorizePermissions('admin'), archiveReview);
+
+router
+  .route('/unarchive/:id')
+  .patch(authenticateUser, authorizePermissions('admin'), unarchiveReview);
 
 router.route('/user/:id').get(authenticateUser, getUserReviews);
 
