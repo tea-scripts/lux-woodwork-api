@@ -44,7 +44,7 @@ const archiveProduct = async (req, res) => {
     throw new CustomError.NotFoundError(`No product with id: ${id}`);
   }
 
-  product.isArchived = false;
+  product.isArchived = true;
   await product.save();
 
   res.status(StatusCodes.OK).json({ msg: 'Product Archived Successfully' });
