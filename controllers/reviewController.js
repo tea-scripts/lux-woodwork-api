@@ -78,7 +78,7 @@ const getUserReviews = async (req, res) => {
   const count = await Review.countDocuments({ user: id });
 
   const userReviews = await Review.find({ user: req.user.userId })
-    .populate('product', 'name image')
+    .populate('product', 'name images')
     .sort({ createdAt: -1 })
     .limit(limit)
     .skip(limit * (page - 1));
