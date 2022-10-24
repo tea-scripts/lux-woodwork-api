@@ -45,6 +45,7 @@ const archiveProduct = async (req, res) => {
   }
 
   product.isArchived = true;
+  product.displayProduct = false;
   await product.save();
 
   res.status(StatusCodes.OK).json({ msg: 'Product Archived Successfully' });
