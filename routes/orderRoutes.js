@@ -30,11 +30,11 @@ router
   .delete(authenticateUser, authorizePermissions('admin'), deleteOrder);
 
 router
-  .route('archive/:id')
+  .route('/archive/:id')
   .patch(authenticateUser, authorizePermissions('admin'), archiveOrder);
 
 router
-  .route('unarchive/:id')
+  .route('/unarchive/:id')
   .patch(authenticateUser, authorizePermissions('admin'), unarchiveOrder);
 
 router.route('/cancel/:id').patch(authenticateUser, cancelOrder);
