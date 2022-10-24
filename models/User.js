@@ -12,6 +12,9 @@ const UserSchema = new Schema(
     last_name: {
       type: String,
     },
+    avatar: {
+      type: String,
+    },
     email: {
       type: String,
       required: [true, 'Please provide an email'],
