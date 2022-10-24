@@ -34,7 +34,7 @@ const getUserWishlist = async (req, res) => {
 
     const userWishlist = await Wishlist.find({userId: id}).populate({
         path: 'product',
-        select: 'name image price featured description',    
+        select: 'name image images price featured description',    
     }).sort({createdAt: -1}).limit(limit).skip((page - 1) * limit);
 
     res.status(StatusCodes.OK).json({userWishlist, count: userWishlist.length, pages: Math.ceil(count / limit)});
