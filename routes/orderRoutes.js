@@ -8,6 +8,8 @@ const {
   updateOrder,
   deleteOrder,
   cancelOrder,
+  archiveOrder,
+  unarchiveOrder,
 } = require('../controllers/orderController');
 const {
   authenticateUser,
@@ -25,7 +27,9 @@ router
   .route('/:id')
   .get(authenticateUser, getSingleOrder)
   .patch(authenticateUser, updateOrder)
-  .delete(authenticateUser, deleteOrder);
+  .patch(authenticateUser, authorizePermissions('admin'), archiveOrder)
+  .patch(authenticateUser, authorizePermissions('admin'), unarchiveOrder)
+  .patch(authenticateUser, authorizePermissions('admin'), deleteOrder);
 
 router.route('/cancel/:id').patch(authenticateUser, cancelOrder);
 

@@ -123,7 +123,6 @@ const updateReview = async (req, res) => {
 
 const deleteReview = async (req, res) => {
   const { id: reviewId } = req.params;
-
   const review = await Review.findOne({ _id: reviewId });
 
   if (!review) {
@@ -131,7 +130,10 @@ const deleteReview = async (req, res) => {
   }
 
   checkPermissions(req.user, review.user);
-  await review.remove();
+
+  review.isDeleted = true;
+  await review.save();
+
   res.status(StatusCodes.OK).json({ msg: 'Success! Review removed' });
 };
 
@@ -157,6 +159,32 @@ const getSingleProductReviews = async (req, res) => {
     .json({ reviews, totalPages, totalReviews, count: reviews.length });
 };
 
+const archiveReview = async (req, res) => {
+  const { id: reviewId } = req.params;
+  const review = await Review.findOne({ _id: reviewId });
+
+  if (!review) {
+    throw new CustomError.NotFoundError(`No review with id ${reviewId}`);
+  }
+
+  review.isArchived = true;
+  await review.save();
+  res.status(StatusCodes.OK).json({ msg: 'Success! Review archived' });
+};
+
+const unarchiveReview = async (req, res) => {
+  const { id: reviewId } = req.params;
+  const review = await Review.findOne({ _id: reviewId });
+
+  if (!review) {
+    throw new CustomError.NotFoundError(`No review with id ${reviewId}`);
+  }
+
+  review.isArchived = false;
+  await review.save();
+  res.status(StatusCodes.OK).json({ msg: 'Success! Review unarchived' });
+};
+
 module.exports = {
   createReview,
   getAllReviews,
@@ -165,4 +193,6 @@ module.exports = {
   deleteReview,
   getSingleProductReviews,
   getUserReviews,
+  archiveReview,
+  unarchiveReview,
 };

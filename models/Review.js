@@ -23,6 +23,14 @@ const ReviewSchema = new Schema(
       ref: 'Product',
       required: true,
     },
+    isArchived: {
+      type: Boolean,
+      default: false,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

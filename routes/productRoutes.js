@@ -10,6 +10,8 @@ const {
   getSingleProduct,
   updateProduct,
   deleteProduct,
+  archiveProduct,
+  unarchiveProduct,
 } = require('../controllers/productController');
 const { getSingleProductReviews } = require('../controllers/reviewController');
 
@@ -22,6 +24,8 @@ router
   .route('/:id')
   .get(getSingleProduct)
   .patch(authenticateUser, authorizePermissions('admin'), updateProduct)
+  .patch(authenticateUser, authorizePermissions('admin'), archiveProduct)
+  .patch(authenticateUser, authorizePermissions('admin'), unarchiveProduct)
   .delete(authenticateUser, authorizePermissions('admin'), deleteProduct);
 
 router.route('/:id/reviews').get(getSingleProductReviews);

@@ -91,15 +91,20 @@ const createOrder = async (req, res) => {
 const getUserOrders = async (req, res) => {
   const limit = 5;
   const page = Number(req.query.page) || 1;
-  const {id} = req.params;
+  const { id } = req.params;
 
   checkPermissions(req.user, id);
 
-  const count = await Order.countDocuments({ user: req.user.userId })
+  const count = await Order.countDocuments({ user: req.user.userId });
 
-  const orders = await Order.find({ user: req.user.userId }).sort({createdAt: -1}).limit(limit).skip(limit * (page - 1));
-  
-  res.status(StatusCodes.OK).json({ orders, count: orders.length, pages: Math.ceil(count / limit) });
+  const orders = await Order.find({ user: req.user.userId })
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .skip(limit * (page - 1));
+
+  res
+    .status(StatusCodes.OK)
+    .json({ orders, count: orders.length, pages: Math.ceil(count / limit) });
 };
 
 const getSingleOrder = async (req, res) => {
@@ -168,9 +173,8 @@ const deleteOrder = async (req, res) => {
     throw new CustomError.NotFoundError(`No order with id : ${req.params.id}`);
   }
 
-  checkPermissions(req.user, order.user);
-
-  await order.remove();
+  order.isDeleted = true;
+  await order.save();
   res.status(StatusCodes.OK).json({ order });
 };
 
@@ -190,6 +194,28 @@ const cancelOrder = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: 'Order cancelled' });
 };
 
+const archiveOrder = async (req, res) => {
+  const order = await Order.findOne({ _id: req.params.id });
+  if (!order) {
+    throw new CustomError.NotFoundError(`No order with id : ${req.params.id}`);
+  }
+
+  order.isArchived = true;
+  await order.save();
+  res.status(StatusCodes.OK).json({ msg: 'Order archived' });
+};
+
+const unarchiveOrder = async (req, res) => {
+  const order = await Order.findOne({ _id: req.params.id });
+  if (!order) {
+    throw new CustomError.NotFoundError(`No order with id : ${req.params.id}`);
+  }
+
+  order.isArchived = false;
+  await order.save();
+  res.status(StatusCodes.OK).json({ msg: 'Order unarchived' });
+};
+
 module.exports = {
   createOrder,
   getUserOrders,
@@ -198,4 +224,6 @@ module.exports = {
   updateOrder,
   deleteOrder,
   cancelOrder,
+  archiveOrder,
+  unarchiveOrder,
 };

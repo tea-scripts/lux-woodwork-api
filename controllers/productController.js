@@ -36,6 +36,34 @@ const getSingleProduct = async (req, res) => {
   res.status(StatusCodes.OK).json({ product });
 };
 
+const archiveProduct = async (req, res) => {
+  const { id } = req.params;
+  const product = await Product.findOneById({ _id: id });
+
+  if (!product) {
+    throw new CustomError.NotFoundError(`No product with id: ${id}`);
+  }
+
+  product.isArchived = false;
+  await product.save();
+
+  res.status(StatusCodes.OK).json({ msg: 'Product Archived Successfully' });
+};
+
+const unarchiveProduct = async (req, res) => {
+  const { id } = req.params;
+  const product = await Product.findOneById({ _id: id });
+
+  if (!product) {
+    throw new CustomError.NotFoundError(`No product with id: ${id}`);
+  }
+
+  product.isArchived = false;
+  await product.save();
+
+  res.status(StatusCodes.OK).json({ msg: 'Product Unarchived Successfully' });
+};
+
 const updateProduct = async (req, res) => {
   const { id } = req.params;
   const product = await Product.findOne({ _id: id });
@@ -53,10 +81,14 @@ const updateProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
   const { id } = req.params;
-  const product = await Product.findOneAndDelete({ _id: id });
+  const product = await Product.findOne({ _id: id });
   if (!product) {
     throw new CustomError.NotFoundError(`No product with id: ${id}`);
   }
+
+  product.isDeleted = true;
+  await product.save();
+
   res.status(StatusCodes.OK).json({ msg: 'Product Deleted Successfully' });
 };
 
@@ -66,4 +98,6 @@ module.exports = {
   getSingleProduct,
   updateProduct,
   deleteProduct,
+  archiveProduct,
+  unarchiveProduct,
 };

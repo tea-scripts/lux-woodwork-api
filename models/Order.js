@@ -64,6 +64,14 @@ const OrderSchema = new Schema(
     paymentIntentId: {
       type: String,
     },
+    isArchived: {
+      type: Boolean,
+      default: false,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
     shippingAddress: {
       type: Schema.Types.Mixed,
     },

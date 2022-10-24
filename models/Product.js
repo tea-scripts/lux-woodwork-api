@@ -20,7 +20,7 @@ const ProductSchema = new Schema(
       maxlength: [1000, 'Description can not be more than 1000 characters'],
     },
     image: {
-      type: String,
+      type: Array,
     },
     category: {
       type: String,
@@ -64,6 +64,14 @@ const ProductSchema = new Schema(
       type: mongoose.Types.ObjectId,
       ref: 'User',
       required: true,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    isArchived: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
