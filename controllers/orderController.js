@@ -27,12 +27,12 @@ const createOrder = async (req, res) => {
     if (!dbProduct) {
       throw new CustomError.NotFoundError(`No product with id : ${item._id}`);
     }
-    const { name, price, image, _id } = dbProduct;
+    const { name, price, images, _id } = dbProduct;
     const singleOrderItem = {
       quantity: item.quantity,
       name,
       price,
-      image,
+      image: images[0],
       product: _id,
     };
 
