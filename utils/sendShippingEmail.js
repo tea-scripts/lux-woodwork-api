@@ -1,6 +1,6 @@
 const sendEmail = require('./sendEmail');
 
-const sendShippingEmail = async ({ first_name, email, order, origin }) => {
+const sendShippingEmail = async ({ username, email, order, origin }) => {
   const formatPrice = (number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -47,7 +47,7 @@ const sendShippingEmail = async ({ first_name, email, order, origin }) => {
   return sendEmail({
     to: email,
     subject: 'Order Shipped',
-    html: `<h4>Hi ${first_name}</h4>
+    html: `<h4>Hi ${username}</h4>
     <div style='margin: 0 auto'>
     ${message}
     </div>

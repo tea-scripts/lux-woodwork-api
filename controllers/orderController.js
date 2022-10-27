@@ -236,15 +236,17 @@ const shipOrder = async (req, res) => {
     throw new CustomError.NotFoundError(`No order with id : ${req.params.id}`);
   }
 
+  const user = await User.findOne({ _id: order.user });
+
   order.isShipped = true;
-  await order.save();
   await sendShippingEmail({
-    first_name: order.user.first_name,
-    email: order.user.email,
+    username: user.username,
+    email: user.email,
     order,
     origin: 'http://localhost:3000',
   });
 
+  await order.save();
   res.status(StatusCodes.OK).json({ msg: 'Order shipped' });
 };
 
@@ -253,12 +255,13 @@ const deliveredOrder = async (req, res) => {
   if (!order) {
     throw new CustomError.NotFoundError(`No order with id : ${req.params.id}`);
   }
+  const user = await User.findOne({ _id: order.user });
 
   order.isDelivered = true;
 
   sendOrderDeliveredEmail({
-    first_name: order.user.first_name,
-    email: order.user.email,
+    username: user.username,
+    email: user.email,
     order,
     origin: 'http://localhost:3000',
   });

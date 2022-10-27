@@ -1,11 +1,13 @@
 const sendEmail = require('./sendEmail');
 
-const sendOrderDeliveredEmail = async ({
-  first_name,
-  email,
-  order,
-  origin,
-}) => {
+const sendOrderDeliveredEmail = async ({ username, email, order, origin }) => {
+  const formatPrice = (number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'PHP',
+    }).format(number / 100);
+  };
+
   const orderUrl = `${origin}/orders/${order._id}`;
   const message = `
   <div>
@@ -45,7 +47,7 @@ const sendOrderDeliveredEmail = async ({
   return sendEmail({
     to: email,
     subject: 'Order Delivered',
-    html: `<h4>Hi ${first_name}</h4>
+    html: `<h4>Hi ${username}</h4>
     <div style='margin: 0 auto'>
     ${message}
     </div>
