@@ -6,6 +6,8 @@ const { checkPermissions } = require('../utils');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const User = require('../models/User');
 const sendOrderConfirmationEmail = require('../utils/sendOrderConfirmationEmail');
+const sendShippingEmail = require('../utils/sendShippingEmail');
+const sendOrderDeliveredEmail = require('../utils/sendOrderDeliveredEmail');
 
 const createOrder = async (req, res) => {
   const { cartItems, tax, shippingFee, defaultAddress } = req.body;
@@ -164,6 +166,18 @@ const updateOrder = async (req, res) => {
     origin: 'http://localhost:3000',
   });
 
+  const updateInventory = async () => {
+    const promises = order.orderItems.map(async (item) => {
+      const product = await Product.findOne({ _id: item.product });
+      product.inventory -= item.quantity;
+      await product.save();
+    });
+
+    await Promise.all(promises);
+  };
+
+  await updateInventory();
+
   res.status(StatusCodes.OK).json({ order });
 };
 
@@ -216,6 +230,42 @@ const unarchiveOrder = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: 'Order unarchived' });
 };
 
+const shipOrder = async (req, res) => {
+  const order = await Order.findOne({ _id: req.params.id });
+  if (!order) {
+    throw new CustomError.NotFoundError(`No order with id : ${req.params.id}`);
+  }
+
+  order.isShipped = true;
+  await order.save();
+  await sendShippingEmail({
+    first_name: order.user.first_name,
+    email: order.user.email,
+    order,
+    origin: 'http://localhost:3000',
+  });
+
+  res.status(StatusCodes.OK).json({ msg: 'Order shipped' });
+};
+
+const deliveredOrder = async (req, res) => {
+  const order = await Order.findOne({ _id: req.params.id });
+  if (!order) {
+    throw new CustomError.NotFoundError(`No order with id : ${req.params.id}`);
+  }
+
+  order.isDelivered = true;
+
+  sendOrderDeliveredEmail({
+    first_name: order.user.first_name,
+    email: order.user.email,
+    order,
+    origin: 'http://localhost:3000',
+  });
+  await order.save();
+  res.status(StatusCodes.OK).json({ msg: 'Order delivered' });
+};
+
 module.exports = {
   createOrder,
   getUserOrders,
@@ -226,4 +276,6 @@ module.exports = {
   cancelOrder,
   archiveOrder,
   unarchiveOrder,
+  shipOrder,
+  deliveredOrder,
 };

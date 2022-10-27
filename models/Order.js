@@ -75,6 +75,18 @@ const OrderSchema = new Schema(
     shippingAddress: {
       type: Schema.Types.Mixed,
     },
+    isShipped: {
+      type: Boolean,
+      default: false,
+    },
+    isDelivered: {
+      type: Boolean,
+      default: false,
+    },
+    isCancelled: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

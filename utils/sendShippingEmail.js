@@ -1,11 +1,6 @@
 const sendEmail = require('./sendEmail');
 
-const sendOrderConfirmationEmail = async ({
-  username,
-  email,
-  order,
-  origin,
-}) => {
+const sendShippingEmail = async ({ first_name, email, order, origin }) => {
   const formatPrice = (number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -16,7 +11,7 @@ const sendOrderConfirmationEmail = async ({
   const orderUrl = `${origin}/orders/${order._id}`;
   const message = `
   <div>
-  <p>Thank you! Your order has been confirmed.</p>
+  <p>Your order has been shipped.</p>
   <p>Order ID: ${order._id}</p>
   <p>Order Status: ${order.status}</p>
   <p>Shipping : </p>
@@ -51,8 +46,8 @@ const sendOrderConfirmationEmail = async ({
 
   return sendEmail({
     to: email,
-    subject: 'Order Confirmation',
-    html: `<h4>Hi ${username}</h4>
+    subject: 'Order Shipped',
+    html: `<h4>Hi ${first_name}</h4>
     <div style='margin: 0 auto'>
     ${message}
     </div>
@@ -60,4 +55,4 @@ const sendOrderConfirmationEmail = async ({
   });
 };
 
-module.exports = sendOrderConfirmationEmail;
+module.exports = sendShippingEmail;

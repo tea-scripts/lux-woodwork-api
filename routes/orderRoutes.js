@@ -10,6 +10,8 @@ const {
   cancelOrder,
   archiveOrder,
   unarchiveOrder,
+  shipOrder,
+  deliveredOrder,
 } = require('../controllers/orderController');
 const {
   authenticateUser,
@@ -38,5 +40,13 @@ router
   .patch(authenticateUser, authorizePermissions('admin'), unarchiveOrder);
 
 router.route('/cancel/:id').patch(authenticateUser, cancelOrder);
+
+router
+  .route('/ship/:id')
+  .patch(authenticateUser, authorizePermissions('admin'), shipOrder);
+
+router
+  .route('/deliver/:id')
+  .patch(authenticateUser, authorizePermissions('admin'), deliveredOrder);
 
 module.exports = router;
