@@ -88,6 +88,7 @@ const deleteProduct = async (req, res) => {
   }
 
   product.isDeleted = true;
+  product.displayProduct = false;
   await product.save();
 
   res.status(StatusCodes.OK).json({ msg: 'Product Deleted Successfully' });
