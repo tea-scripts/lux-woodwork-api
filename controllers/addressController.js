@@ -9,7 +9,7 @@ const getAllAddresses = async (req, res) => {
 };
 
 const getAllUserAddresses = async (req, res) => {
-  const limit = 10;
+  const limit = 5;
   const page  = Number(req.query.page) || 1;
   const { id } = req.params;
 
@@ -37,7 +37,14 @@ const getSingleAddress = async (req, res) => {
 };
 
 const createAddress = async (req, res) => {
-  const address = await Address.create(req.body);
+  const addressExists = await Address.countDocuments({userId: req.body.userId});
+
+  let defaultAddress = true;
+  if (addressExists) {
+    defaultAddress = false;
+  }
+
+  const address = await Address.create({...req.body, defaultAddress});
   res.status(StatusCodes.CREATED).json({ address });
 };
 
@@ -83,8 +90,6 @@ const selectDefaultAddress = async (req, res) => {
   }
 
   checkPermissions(req.user, address.userId);
-
-  console.log(address);
 
   const updatedAddress = await Address.bulkWrite([
       {
