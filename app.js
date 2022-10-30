@@ -62,6 +62,7 @@ const productRouter = require('./routes/productRoutes');
 const orderRouter = require('./routes/orderRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const wishlistRouter = require('./routes/wishlistRoutes');
+const sendContactUsEmail = require('./utils/sendContactUsEmail');
 
 app.use(morgan('tiny'));
 app.use(express.json());
@@ -99,13 +100,14 @@ app.get('/', (req, res) => {
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/address', addressRouter);
-app.use('/api/v1/wishlist', wishlistRouter);  
+app.use('/api/v1/wishlist', wishlistRouter);
 
 // Product Routes
 app.use('/api/v1/products', productRouter);
 app.use('/api/v1/orders', orderRouter);
 app.use('/api/v1/reviews', reviewRouter);
 
+// Cloudinary Route
 const uploadToCloudinary = async (localPath) => {
   const mainFolderName = 'lux-woodwork-product-images';
   return cloudinary.uploader
@@ -136,6 +138,26 @@ app.post('/api/v1/uploadImage', upload.array('image'), async (req, res) => {
   res.status(200).json({
     msg: 'images uploaded successfully',
     images: urls,
+  });
+});
+
+// Contact Us Route
+app.post('/api/v1/contact-us', async (req, res) => {
+  const { name, subject, email, message } = req.body;
+  if (!name || !subject || !email || !message) {
+    throw new CustomError.BadRequestError('Please provide all values');
+  }
+
+  await sendContactUsEmail({
+    name: name,
+    email: email,
+    subject: subject,
+    origin: req.headers.origin,
+    message: message,
+  });
+
+  res.status(200).json({
+    msg: 'Email sent successfully',
   });
 });
 
