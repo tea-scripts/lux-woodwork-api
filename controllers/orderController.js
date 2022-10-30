@@ -93,16 +93,57 @@ const createOrder = async (req, res) => {
 const getUserOrders = async (req, res) => {
   const limit = 5;
   const page = Number(req.query.page) || 1;
+  const ordersQueryType = String(req.query.type).toLowerCase() || 'all';
   const { id } = req.params;
+
+  console.log('query type', ordersQueryType);
 
   checkPermissions(req.user, id);
 
-  const count = await Order.countDocuments({ user: req.user.userId });
+  let count = 0;
+  let orders = [];
 
-  const orders = await Order.find({ user: req.user.userId })
-    .sort({ createdAt: -1 })
-    .limit(limit)
-    .skip(limit * (page - 1));
+  switch (ordersQueryType) {
+    case 'pending': {
+      count = await Order.countDocuments({ user: req.user.userId, status: 'pending' });
+      orders = await Order.find({ user: req.user.userId, status: 'pending'  })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .skip(limit * (page - 1));
+      break;
+    }
+    case 'paid': {
+      count = await Order.countDocuments({ user: req.user.userId, status: 'paid' });
+      orders = await Order.find({ user: req.user.userId, status: 'paid'  })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .skip(limit * (page - 1));
+      break;
+    }
+    case 'cancelled': {
+      count = await Order.countDocuments({ user: req.user.userId, status: 'cancelled' });
+      orders = await Order.find({ user: req.user.userId, status: 'cancelled'  })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .skip(limit * (page - 1));
+      break;
+    }
+    case 'delivered': {
+      count = await Order.countDocuments({ user: req.user.userId, isDelivered: true });
+      orders = await Order.find({ user: req.user.userId, isDelivered: true })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .skip(limit * (page - 1));
+      break;
+    }
+    default: {
+      count = await Order.countDocuments({ user: req.user.userId });
+      orders = await Order.find({ user: req.user.userId })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .skip(limit * (page - 1));
+    }
+  }
 
   res
     .status(StatusCodes.OK)
@@ -269,6 +310,18 @@ const deliveredOrder = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: 'Order delivered' });
 };
 
+const receiveOrder = async (req, res) => {
+  const order = await Order.findOne({ _id: req.params.id });
+
+  if (!order) {
+    throw new CustomError.NotFoundError(`No order with id : ${req.params.id}`);
+  }
+
+  order.isReceived = true;
+  await order.save();
+  res.status(StatusCodes.OK).json({ msg: 'Order received' });
+}
+
 module.exports = {
   createOrder,
   getUserOrders,
@@ -281,4 +334,5 @@ module.exports = {
   unarchiveOrder,
   shipOrder,
   deliveredOrder,
+  receiveOrder
 };

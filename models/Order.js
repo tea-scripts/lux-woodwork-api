@@ -87,6 +87,10 @@ const OrderSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    isReceived: {
+      type: Boolean,
+      default: false,
+    }
   },
   { timestamps: true }
 );

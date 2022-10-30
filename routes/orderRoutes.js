@@ -12,6 +12,7 @@ const {
   unarchiveOrder,
   shipOrder,
   deliveredOrder,
+  receiveOrder,
 } = require('../controllers/orderController');
 const {
   authenticateUser,
@@ -48,5 +49,9 @@ router
 router
   .route('/deliver/:id')
   .patch(authenticateUser, authorizePermissions('admin'), deliveredOrder);
+
+  router
+  .route('/receive/:id')
+  .patch(authenticateUser, receiveOrder);
 
 module.exports = router;
