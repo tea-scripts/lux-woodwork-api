@@ -63,6 +63,7 @@ const orderRouter = require('./routes/orderRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const wishlistRouter = require('./routes/wishlistRoutes');
 const sendContactUsEmail = require('./utils/sendContactUsEmail');
+const ContactUs = require('./models/ContactUs');
 
 app.use(morgan('tiny'));
 app.use(express.json());
@@ -146,6 +147,11 @@ app.post('/api/v1/contact-us', async (req, res) => {
   const { name, subject, email, message } = req.body;
   if (!name || !subject || !email || !message) {
     throw new CustomError.BadRequestError('Please provide all values');
+  }
+
+  const emailSent = await ContactUs.create(req.body);
+  if (!emailSent) {
+    throw new CustomError.BadRequestError('Email not sent');
   }
 
   await sendContactUsEmail({
