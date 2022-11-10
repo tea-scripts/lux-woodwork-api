@@ -26,7 +26,7 @@ const allowedOrigins = [
   'https://adal-backend.herokuapp.com',
   'https://lux-woodwork-store.netlify.app',
   'https://lux-woodwork-api.onrender.com',
-  'https://lux-woodwork.onrender.com/'
+  'https://lux-woodwork.onrender.com',
 ];
 
 if (!fs.existsSync('./uploads')) {
