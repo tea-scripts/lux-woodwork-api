@@ -105,43 +105,55 @@ const getUserOrders = async (req, res) => {
 
   switch (ordersQueryType) {
     case 'pending': {
-      count = await Order.countDocuments({ user: req.user.userId, status: 'pending' });
-      orders = await Order.find({ user: req.user.userId, status: 'pending'  })
-      .sort({ createdAt: -1 })
-      .limit(limit)
-      .skip(limit * (page - 1));
+      count = await Order.countDocuments({
+        user: req.user.userId,
+        status: 'pending',
+      });
+      orders = await Order.find({ user: req.user.userId, status: 'pending' })
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .skip(limit * (page - 1));
       break;
     }
     case 'paid': {
-      count = await Order.countDocuments({ user: req.user.userId, status: 'paid' });
-      orders = await Order.find({ user: req.user.userId, status: 'paid'  })
-      .sort({ createdAt: -1 })
-      .limit(limit)
-      .skip(limit * (page - 1));
+      count = await Order.countDocuments({
+        user: req.user.userId,
+        status: 'paid',
+      });
+      orders = await Order.find({ user: req.user.userId, status: 'paid' })
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .skip(limit * (page - 1));
       break;
     }
     case 'cancelled': {
-      count = await Order.countDocuments({ user: req.user.userId, status: 'cancelled' });
-      orders = await Order.find({ user: req.user.userId, status: 'cancelled'  })
-      .sort({ createdAt: -1 })
-      .limit(limit)
-      .skip(limit * (page - 1));
+      count = await Order.countDocuments({
+        user: req.user.userId,
+        status: 'cancelled',
+      });
+      orders = await Order.find({ user: req.user.userId, status: 'cancelled' })
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .skip(limit * (page - 1));
       break;
     }
     case 'delivered': {
-      count = await Order.countDocuments({ user: req.user.userId, isDelivered: true });
+      count = await Order.countDocuments({
+        user: req.user.userId,
+        isDelivered: true,
+      });
       orders = await Order.find({ user: req.user.userId, isDelivered: true })
-      .sort({ createdAt: -1 })
-      .limit(limit)
-      .skip(limit * (page - 1));
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .skip(limit * (page - 1));
       break;
     }
     default: {
       count = await Order.countDocuments({ user: req.user.userId });
       orders = await Order.find({ user: req.user.userId })
-      .sort({ createdAt: -1 })
-      .limit(limit)
-      .skip(limit * (page - 1));
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .skip(limit * (page - 1));
     }
   }
 
@@ -200,11 +212,18 @@ const updateOrder = async (req, res) => {
 
   await order.save();
 
+  const env = process.env.NODE_ENV || 'development';
+
+  const origin =
+    env === 'development'
+      ? 'http://localhost:3000'
+      : 'https://lux-woodwork.onrender.com';
+
   await sendOrderConfirmationEmail({
     username: user.username,
     email: user.email,
     order,
-    origin: 'http://localhost:3000',
+    origin,
   });
 
   const updateInventory = async () => {
@@ -280,11 +299,19 @@ const shipOrder = async (req, res) => {
   const user = await User.findOne({ _id: order.user });
 
   order.isShipped = true;
+
+  const env = process.env.NODE_ENV || 'development';
+
+  const origin =
+    env === 'development'
+      ? 'http://localhost:3000'
+      : 'https://lux-woodwork.onrender.com';
+
   await sendShippingEmail({
     username: user.username,
     email: user.email,
     order,
-    origin: 'http://localhost:3000',
+    origin,
   });
 
   await order.save();
@@ -300,11 +327,18 @@ const deliveredOrder = async (req, res) => {
 
   order.isDelivered = true;
 
+  const env = process.env.NODE_ENV || 'development';
+
+  const origin =
+    env === 'development'
+      ? 'http://localhost:3000'
+      : 'https://lux-woodwork.onrender.com';
+
   sendOrderDeliveredEmail({
     username: user.username,
     email: user.email,
     order,
-    origin: 'http://localhost:3000',
+    origin,
   });
   await order.save();
   res.status(StatusCodes.OK).json({ msg: 'Order delivered' });
@@ -320,7 +354,7 @@ const receiveOrder = async (req, res) => {
   order.isReceived = true;
   await order.save();
   res.status(StatusCodes.OK).json({ msg: 'Order received' });
-}
+};
 
 module.exports = {
   createOrder,
@@ -334,5 +368,5 @@ module.exports = {
   unarchiveOrder,
   shipOrder,
   deliveredOrder,
-  receiveOrder
+  receiveOrder,
 };

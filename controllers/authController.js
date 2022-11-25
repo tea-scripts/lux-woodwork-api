@@ -21,7 +21,12 @@ const register = async (req, res) => {
 
   const verificationToken = crypto.randomBytes(45).toString('hex');
 
-  const origin = 'http://localhost:3000';
+  const env = process.env.NODE_ENV || 'development';
+
+  const origin =
+    env === 'development'
+      ? 'http://localhost:3000'
+      : 'https://lux-woodwork.onrender.com';
 
   const user = await User.create({
     email,
@@ -35,7 +40,7 @@ const register = async (req, res) => {
     username: user.username,
     email: user.email,
     verificationToken: user.verificationToken,
-    origin: origin,
+    origin,
   });
 
   res.status(StatusCodes.CREATED).json({
@@ -109,7 +114,13 @@ const forgotPassword = async (req, res) => {
   if (user) {
     const passwordToken = crypto.randomBytes(45).toString('hex');
 
-    const origin = 'http://localhost:3000';
+    const env = process.env.NODE_ENV || 'development';
+
+    const origin =
+      env === 'development'
+        ? 'http://localhost:3000'
+        : 'https://lux-woodwork.onrender.com';
+
     await sendResetPasswordEmail({
       username: user.username,
       email: user.email,
