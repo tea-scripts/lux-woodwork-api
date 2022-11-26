@@ -6,6 +6,7 @@ const createHash = require('./createHash');
 const sendOrderDeliveredEmail = require('./sendOrderDeliveredEmail');
 const sendOrderConfirmationEmail = require('./sendOrderConfirmationEmail');
 const sendShippingEmail = require('./sendShippingEmail');
+const sendSubscriptionEmail = require('./sendSubscriptionEmail');
 
 module.exports = {
   checkPermissions,
@@ -16,4 +17,5 @@ module.exports = {
   sendOrderDeliveredEmail,
   sendOrderConfirmationEmail,
   sendShippingEmail,
+  sendSubscriptionEmail,
 };

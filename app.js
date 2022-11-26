@@ -66,6 +66,7 @@ const reviewRouter = require('./routes/reviewRoutes');
 const wishlistRouter = require('./routes/wishlistRoutes');
 const sendContactUsEmail = require('./utils/sendContactUsEmail');
 const ContactUs = require('./models/ContactUs');
+const newsLetterRouter = require('./routes/newsLetterSubscriberRoute');
 
 app.use(morgan('tiny'));
 app.use(express.json());
@@ -109,6 +110,9 @@ app.use('/api/v1/wishlist', wishlistRouter);
 app.use('/api/v1/products', productRouter);
 app.use('/api/v1/orders', orderRouter);
 app.use('/api/v1/reviews', reviewRouter);
+
+// NewsLetter Route
+app.use('/api/v1/newsletter', newsLetterRouter);
 
 // Cloudinary Route
 const uploadToCloudinary = async (localPath) => {
