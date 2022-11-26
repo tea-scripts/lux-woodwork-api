@@ -2,9 +2,6 @@ const NewsLetterSubscriber = require('../models/NewsLetterSubscriber');
 const { StatusCodes } = require('http-status-codes');
 const { sendSubscriptionEmail } = require('../utils');
 
-// @desc    Subscribe to newsletter
-// @route   POST /api/newsletter
-// @access  Public
 const subscribeToNewsletter = async (req, res) => {
   const { email } = req.body;
   try {
@@ -24,8 +21,8 @@ const subscribeToNewsletter = async (req, res) => {
   <p>You will receive updates on our latest products and promos!</p>
   <a href=${
     process.env.NODE_ENV === 'production'
-      ? 'https://lux-woodwork.onrender.com/newsletter/unsubscribe'
-      : 'http://localhost:3000/newsletter/unsubscribe'
+      ? `https://lux-woodwork.onrender.com/newsletter/unsubscribe?email=${email}`
+      : `http://localhost:3000/newsletter/unsubscribe?email=${email}`
   }>Unsubscribe</a>
   </div>
   `;
