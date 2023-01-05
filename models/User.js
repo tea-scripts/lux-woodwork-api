@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const bcrypt = require('bcryptjs');
-const validator = require('validator');
-const jwt = require('jsonwebtoken');
+const bcrypt = require("bcryptjs");
+const validator = require("validator");
+const jwt = require("jsonwebtoken");
 
 const UserSchema = new Schema(
   {
@@ -17,18 +17,18 @@ const UserSchema = new Schema(
     },
     email: {
       type: String,
-      required: [true, 'Please provide an email'],
+      required: [true, "Please provide an email"],
       unique: true,
       validate: {
         validator: validator.isEmail,
-        message: 'Please enter a valid email address',
+        message: "Please enter a valid email address",
       },
     },
     username: {
       type: String,
       unique: true,
-      minlength: [6, 'Minimum username length is 6 characters'],
-      required: [true, 'Please provide a username'],
+      minlength: [6, "Minimum username length is 6 characters"],
+      required: [true, "Please provide a username"],
     },
     phone: {
       type: String,
@@ -43,13 +43,18 @@ const UserSchema = new Schema(
     },
     role: {
       type: String,
-      enum: ['user', 'admin'],
-      default: 'user',
+      enum: ["user", "admin"],
+      default: "user",
     },
     password: {
       type: String,
-      required: [true, 'Please provide a password'],
-      minlength: [6, 'Minimum password length is 6 characters'],
+      required: [true, "Please provide a password"],
+      minlength: [6, "Minimum password length is 6 characters"],
+      validate: {
+        validator: validator.isStrongPassword,
+        message:
+          "Password must be at least 8 characters long and contain at least one uppercase, lowercase, numeric, and special character",
+      },
     },
     verificationToken: {
       type: String,
@@ -67,8 +72,8 @@ const UserSchema = new Schema(
   { timestamps: true }
 );
 
-UserSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return;
+UserSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return;
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
@@ -86,4 +91,4 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
   return isMatch;
 };
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model("User", UserSchema);
