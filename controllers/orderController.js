@@ -163,7 +163,10 @@ const getUserOrders = async (req, res) => {
 };
 
 const getSingleOrder = async (req, res) => {
-  const order = await Order.findOne({ _id: req.params.id });
+  const order = await Order.findOne({ _id: req.params.id }).populate({
+    path: 'user',
+    select: 'phone email first_name last_name',
+  });
   if (!order) {
     throw new CustomError.NotFoundError(`No order with id : ${req.params.id}`);
   }

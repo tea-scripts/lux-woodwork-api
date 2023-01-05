@@ -15,9 +15,24 @@ const contactUsSchema = new Schema(
       type: String,
       required: [true, 'Please enter a subject'],
     },
+    product_name: {
+      type: mongoose.Types.ObjectId,
+      ref: 'Product',
+    },
+    order_id: {
+      type: mongoose.Types.ObjectId,
+      ref: 'Order',
+    },
+    support_type: {
+      type: String,
+    },
+    status: {
+      type: String,
+      enum: ['pending', 'resolved', 'closed', 'cancelled'],
+      default: 'pending',
+    },
     message: {
       type: String,
-      required: [true, 'Please enter a message'],
     },
   },
   { timestamps: true }

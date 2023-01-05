@@ -50,8 +50,6 @@ router
   .route('/deliver/:id')
   .patch(authenticateUser, authorizePermissions('admin'), deliveredOrder);
 
-  router
-  .route('/receive/:id')
-  .patch(authenticateUser, receiveOrder);
+router.route('/receive/:id').patch(authenticateUser, receiveOrder);
 
 module.exports = router;

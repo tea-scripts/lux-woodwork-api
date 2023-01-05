@@ -7,6 +7,7 @@ const sendOrderDeliveredEmail = require('./sendOrderDeliveredEmail');
 const sendOrderConfirmationEmail = require('./sendOrderConfirmationEmail');
 const sendShippingEmail = require('./sendShippingEmail');
 const sendSubscriptionEmail = require('./sendSubscriptionEmail');
+const sendContactUsEmail = require('./sendContactUsEmail');
 
 module.exports = {
   checkPermissions,
@@ -18,4 +19,5 @@ module.exports = {
   sendOrderConfirmationEmail,
   sendShippingEmail,
   sendSubscriptionEmail,
+  sendContactUsEmail,
 };

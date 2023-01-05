@@ -64,9 +64,8 @@ const productRouter = require('./routes/productRoutes');
 const orderRouter = require('./routes/orderRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const wishlistRouter = require('./routes/wishlistRoutes');
-const sendContactUsEmail = require('./utils/sendContactUsEmail');
-const ContactUs = require('./models/ContactUs');
 const newsLetterRouter = require('./routes/newsLetterSubscriberRoute');
+const contactUsRouter = require('./routes/contactUsRoutes');
 
 app.use(morgan('tiny'));
 app.use(express.json());
@@ -114,6 +113,9 @@ app.use('/api/v1/reviews', reviewRouter);
 // NewsLetter Route
 app.use('/api/v1/newsletter', newsLetterRouter);
 
+// Contact Us Route
+app.use('/api/v1/contact-us', contactUsRouter);
+
 // Cloudinary Route
 const uploadToCloudinary = async (localPath) => {
   const mainFolderName = 'lux-woodwork-product-images';
@@ -145,31 +147,6 @@ app.post('/api/v1/uploadImage', upload.array('image'), async (req, res) => {
   res.status(200).json({
     msg: 'images uploaded successfully',
     images: urls,
-  });
-});
-
-// Contact Us Route
-app.post('/api/v1/contact-us', async (req, res) => {
-  const { name, subject, email, message } = req.body;
-  if (!name || !subject || !email || !message) {
-    throw new CustomError.BadRequestError('Please provide all values');
-  }
-
-  const emailSent = await ContactUs.create(req.body);
-  if (!emailSent) {
-    throw new CustomError.BadRequestError('Email not sent');
-  }
-
-  await sendContactUsEmail({
-    name: name,
-    email: email,
-    subject: subject,
-    origin: req.headers.origin,
-    message: message,
-  });
-
-  res.status(200).json({
-    msg: 'Email sent successfully',
   });
 });
 
