@@ -165,13 +165,13 @@ const getUserOrders = async (req, res) => {
 const getSingleOrder = async (req, res) => {
   const order = await Order.findOne({ _id: req.params.id }).populate({
     path: 'user',
-    select: 'phone email first_name last_name',
+    select: 'phone email first_name last_name role',
   });
   if (!order) {
     throw new CustomError.NotFoundError(`No order with id : ${req.params.id}`);
   }
 
-  checkPermissions(req.user, order.user);
+  checkPermissions(req.user, order.user._id);
   res.status(StatusCodes.OK).json({ order });
 };
 
