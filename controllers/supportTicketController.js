@@ -27,12 +27,10 @@ const createTicket = async (req, res) => {
     message,
   });
 
-  res
-    .status(StatusCodes.CREATED)
-    .json({
-      ticket,
-      msg: "Ticket sent successfully. Please wait for a response from our support team",
-    });
+  res.status(StatusCodes.CREATED).json({
+    ticket,
+    msg: "Ticket sent successfully. Please wait for a response from our support team",
+  });
 };
 
 const getAllTickets = async (req, res) => {
@@ -94,7 +92,7 @@ const resolveTicket = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "Ticket resolved" });
 };
 
-const closeTicket = async (req, res) => {
+const cancelTicket = async (req, res) => {
   const { id } = req.params;
 
   const ticket = await SupportTicket.findById(id);
@@ -103,10 +101,10 @@ const closeTicket = async (req, res) => {
     throw new CustomError.NotFoundError(`Ticket not found`);
   }
 
-  ticket.status = "closed";
+  ticket.status = "cancelled";
   await ticket.save();
 
-  res.status(StatusCodes.OK).json({ msg: "Ticket closed" });
+  res.status(StatusCodes.OK).json({ msg: "Ticket cancelled" });
 };
 
 const deleteTicket = async (req, res) => {
@@ -128,5 +126,5 @@ module.exports = {
   getUserTickets,
   deleteTicket,
   resolveTicket,
-  closeTicket,
+  cancelTicket,
 };
