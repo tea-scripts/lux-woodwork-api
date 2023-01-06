@@ -116,6 +116,8 @@ const cancelQuery = async (req, res) => {
       new: true,
     }
   );
+
+  res.status(StatusCodes.OK).json({ msg: 'Query Closed/Canceled' });
 };
 
 module.exports = {
