@@ -4,6 +4,9 @@ const CustomError = require('../errors');
 
 const createProduct = async (req, res) => {
   req.body.user = req.user.userId;
+  const { price } = req.body;
+  const tax = 0.12;
+  req.body.price = price + price * tax;
   const product = await Product.create(req.body);
   res.status(StatusCodes.CREATED).json({ product });
 };
