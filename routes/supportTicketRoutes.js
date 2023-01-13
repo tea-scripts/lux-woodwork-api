@@ -6,7 +6,6 @@ const {
   deleteTicket,
   resolveTicket,
   cancelTicket,
-  closeTicket,
 } = require("../controllers/supportTicketController.js");
 const router = express.Router();
 const {
@@ -32,9 +31,5 @@ router
 router
   .route("/cancel/:id")
   .patch(authenticateUser, authorizePermissions("admin"), cancelTicket);
-
-router
-  .route("/close/:id")
-  .patch(authenticateUser, authorizePermissions("admin"), closeTicket);
 
 module.exports = router;

@@ -107,21 +107,6 @@ const cancelTicket = async (req, res) => {
   res.status(StatusCodes.OK).json({ msg: "Ticket cancelled" });
 };
 
-const closeTicket = async (req, res) => {
-  const { id } = req.params;
-
-  const ticket = await SupportTicket.findById(id);
-
-  if (!ticket) {
-    throw new CustomError.NotFoundError(`Ticket not found`);
-  }
-
-  ticket.status = "closed";
-  await ticket.save();
-
-  res.status(StatusCodes.OK).json({ msg: "Ticket closed" });
-};
-
 const deleteTicket = async (req, res) => {
   const { id } = req.params;
 
@@ -142,5 +127,4 @@ module.exports = {
   deleteTicket,
   resolveTicket,
   cancelTicket,
-  closeTicket,
 };
