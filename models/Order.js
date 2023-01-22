@@ -27,10 +27,6 @@ const SingleOrderItemSchema = new Schema({
 
 const OrderSchema = new Schema(
   {
-    tax: {
-      type: Number,
-      required: true,
-    },
     shippingFee: {
       type: Number,
       required: true,

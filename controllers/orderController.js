@@ -10,14 +10,14 @@ const sendShippingEmail = require('../utils/sendShippingEmail');
 const sendOrderDeliveredEmail = require('../utils/sendOrderDeliveredEmail');
 
 const createOrder = async (req, res) => {
-  const { cartItems, tax, shippingFee, defaultAddress } = req.body;
+  const { cartItems,  shippingFee, defaultAddress } = req.body;
 
   if (!cartItems || cartItems.length < 1) {
     throw new CustomError.BadRequestError('No cart items provided');
   }
-  if (!tax || !shippingFee) {
+  if (!shippingFee) {
     throw new CustomError.BadRequestError(
-      'Please provide tax and shipping fee'
+      'Please provide shipping fee'
     );
   }
 
@@ -69,7 +69,6 @@ const createOrder = async (req, res) => {
     orderItems,
     total,
     subtotal,
-    tax,
     shippingFee,
     clientSecret: paymentIntent.client_secret,
     user: req.user.userId,
