@@ -10,15 +10,13 @@ const sendShippingEmail = require('../utils/sendShippingEmail');
 const sendOrderDeliveredEmail = require('../utils/sendOrderDeliveredEmail');
 
 const createOrder = async (req, res) => {
-  const { cartItems,  shippingFee, defaultAddress } = req.body;
+  const { cartItems, shippingFee, defaultAddress } = req.body;
 
   if (!cartItems || cartItems.length < 1) {
     throw new CustomError.BadRequestError('No cart items provided');
   }
   if (!shippingFee) {
-    throw new CustomError.BadRequestError(
-      'Please provide shipping fee'
-    );
+    throw new CustomError.BadRequestError('Please provide shipping fee');
   }
 
   let orderItems = [];
@@ -29,11 +27,11 @@ const createOrder = async (req, res) => {
     if (!dbProduct) {
       throw new CustomError.NotFoundError(`No product with id : ${item._id}`);
     }
-    const { name, price, images, _id } = dbProduct;
+    const { name, priceWithVAT, images, _id } = dbProduct;
     const singleOrderItem = {
       quantity: item.quantity,
       name,
-      price,
+      priceWithVAT,
       image: images[0],
       product: _id,
     };
@@ -42,10 +40,10 @@ const createOrder = async (req, res) => {
     orderItems = [...orderItems, singleOrderItem];
 
     // calculate subtotal
-    subtotal += item.quantity * price;
+    subtotal += item.quantity * priceWithVAT;
   }
   // calculate total
-  const total = tax + shippingFee + subtotal;
+  const total = shippingFee + subtotal;
 
   const user = await User.findOne({ _id: req.user.userId });
   if (!user) {

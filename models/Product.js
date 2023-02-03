@@ -14,6 +14,11 @@ const ProductSchema = new Schema(
       required: [true, 'Please provide product price'],
       default: 0,
     },
+    priceWithVAT: {
+      type: Number,
+      required: [true, 'Please provide product price with VAT'],
+      default: 0,
+    },
     description: {
       type: String,
       required: [true, 'Please provide product description'],
@@ -46,7 +51,7 @@ const ProductSchema = new Schema(
     inventory: {
       type: Number,
       required: true,
-      default: 15,
+      default: 1,
     },
     averageRating: {
       type: Number,

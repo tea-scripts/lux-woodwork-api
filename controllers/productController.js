@@ -3,12 +3,15 @@ const { StatusCodes } = require('http-status-codes');
 const CustomError = require('../errors');
 
 const createProduct = async (req, res) => {
-  req.body.user = req.user.userId;
   const { price } = req.body;
   const tax = 0.12;
-  req.body.price = parseInt(price) + parseFloat(price * tax);
+  const priceInCent = parseInt(price) * 100;
+
+  req.body.user = req.user.userId;
+  req.body.price = priceInCent;
+  req.body.priceWithVAT = (parseInt(price) + parseFloat(price * tax)) * 100;
   const product = await Product.create(req.body);
-  res.status(StatusCodes.CREATED).json({ product });
+  res.status(StatusCodes.CREATED).json({ product, msg: 'Product Created' });
 };
 
 const getAllProducts = async (req, res) => {
@@ -69,6 +72,16 @@ const unarchiveProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   const { id } = req.params;
+  const { price } = req.body;
+
+  if (price) {
+    const tax = 0.12;
+    const priceInCent = parseInt(price) * 100;
+
+    req.body.price = priceInCent;
+    req.body.priceWithVAT = (parseInt(price) + parseFloat(price * tax)) * 100;
+  }
+
   const product = await Product.findOne({ _id: id });
   if (!product) {
     throw new CustomError.NotFoundError(`No product with id: ${id}`);

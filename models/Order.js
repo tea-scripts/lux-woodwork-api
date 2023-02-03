@@ -10,7 +10,7 @@ const SingleOrderItemSchema = new Schema({
     type: String,
     required: true,
   },
-  price: {
+  priceWithVAT: {
     type: Number,
     required: true,
   },
@@ -86,7 +86,7 @@ const OrderSchema = new Schema(
     isReceived: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   { timestamps: true }
 );
