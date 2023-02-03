@@ -35,7 +35,6 @@ const sendShippingEmail = async ({ username, email, order, origin }) => {
     .join('')}
   </ul>
   <p>Subtotal: ${formatPrice(order.subtotal)}</p>
-  <p>Tax: ${formatPrice(order.tax)}</p>
   <p>Shipping Fee: ${formatPrice(order.shippingFee)}</p>
   <p>Total: ${formatPrice(order.total)}</p>
 

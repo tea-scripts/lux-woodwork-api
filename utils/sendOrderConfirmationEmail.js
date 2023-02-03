@@ -40,7 +40,6 @@ const sendOrderConfirmationEmail = async ({
     .join('')}
   </ul>
   <p>Subtotal: ${formatPrice(order.subtotal)}</p>
-  <p>Tax: ${formatPrice(order.tax)}</p>
   <p>Shipping Fee: ${formatPrice(order.shippingFee)}</p>
   <p>Total: ${formatPrice(order.total)}</p>
 
