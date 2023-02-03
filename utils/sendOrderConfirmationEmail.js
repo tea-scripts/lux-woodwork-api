@@ -33,7 +33,7 @@ const sendOrderConfirmationEmail = async ({
     <li>
       <p>Name: ${item.name}</p>
       <p>Quantity: ${item.quantity}</p>
-      <p>Price: ${formatPrice(item.price)}</p>
+      <p>Price: ${formatPrice(item.priceWithVAT)}</p>
     </li>
     `
     )
