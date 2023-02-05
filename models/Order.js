@@ -87,6 +87,9 @@ const OrderSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    proofOfDelivery: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

@@ -319,12 +319,16 @@ const shipOrder = async (req, res) => {
 };
 
 const deliveredOrder = async (req, res) => {
+  const { proofOfDelivery } = req.body;
+
   const order = await Order.findOne({ _id: req.params.id });
+
   if (!order) {
     throw new CustomError.NotFoundError(`No order with id : ${req.params.id}`);
   }
   const user = await User.findOne({ _id: order.user });
 
+  order.proofOfDelivery = proofOfDelivery;
   order.isDelivered = true;
 
   const env = process.env.NODE_ENV || 'development';
@@ -340,7 +344,9 @@ const deliveredOrder = async (req, res) => {
     order,
     origin,
   });
+
   await order.save();
+
   res.status(StatusCodes.OK).json({ msg: 'Order delivered' });
 };
 
